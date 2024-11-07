@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data e Hora</title>
+    <link rel="stylesheet" href="/DataHora/Index.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous">
+        </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btn").click(function () {
+                try {
+                    $.ajax({
+                        url: "http://worldtimeapi.org/api/timezone/America/Sao_Paulo",
+                        success: function (result) {
+                            var listaData = result.datetime.split(/\D+/);
+                            var agora = new Date(listaData[0], listaData[1] - 1,
+                                listaData[2], listaData[3], listaData[4], listaData[5]);
+                            var mascara = new Intl.NumberFormat('pt-BR', { //Formata ao estilo brasileiro
+                                minimumIntegerDigits: 2, //Pelo menos 2 dígitos
+                                minimumFractionDigits: 0 //Sem casas decimais
+                            });
+
+                            var data = "Data: " + mascara.format(agora.getDate()) + "/" + (agora.getMonth() + 1) + "/" + agora.getFullYear() + " ";
+                            data += "| Hora: " + mascara.format(agora.getHours()) + ":" + mascara.format(agora.getMinutes());
+                            $("#datahora").html(data);
+
+                            //Imagem de acordo com o horário
+                            if (agora.getHours() <= "11"){
+                                $("#image").html("<img src='./img/manha.png' alt='foto do nascer do sol'>");
+                            } else if (agora.getHours() >= "12" && agora.getHours() <= "17"  ){
+                                $("#image").html("<img src='./img/tarde.png' alt='foto do sol de tarde'>");
+                            } else{
+                                $("#image").html("<img src='./img/noite.png' alt='foto da noite'>");
+                            }
+
+
+                        },
+                        error: function () {
+                            $("#datahora").html("Aguarde alguns segundos e tente novamente."); //Avisa ao usuário (Deixa a página carregar)
+                        }
+                    });
+                } catch (e) {
+                    console.error("Erro ao tentar carregar a data e hora:", e);
+                    $("#datahora").html("Aguarde alguns segundos e tente novamente."); //Avisa ao usuário (Deixa a página carregar)
+                }
+            });
+
+        });
+    </script>
+
+</head>
+
+<body>
+
+    <div class="bar">
+        <a href="../DataHora/Index.html">DATA E HORA</a>
+        <a href="../Loja/Index.html">LOJA</a>
+        <a href="../Cachorros/Index.html">CACHORROS</a>
+        <a href="../Resistencia/Index.html">RESISTÊNCIA</a>
+    </div>
+    <div class="page">
+        <div class="container" id="container">
+            <div class="image" id="image">
+            </div>
+            <div class="datahora" id="datahora">-</div>
+            <input type="button" value="Mostrar data e hora" class="btn" id="btn">
+        </div>
+    </div>
+
+</body>
+
+</html>
